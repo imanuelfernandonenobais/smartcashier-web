@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Smart Cashier</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            width: 380px;
+            background: white;
+            padding: 32px;
+            border-radius: 18px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            color: #111827;
+        }
+
+        p {
+            margin-top: 0;
+            color: #6b7280;
+        }
+
+        label {
+            display: block;
+            margin-top: 16px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 8px;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 24px;
+            padding: 12px;
+            border: 0;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .error {
+            margin-top: 16px;
+            padding: 10px;
+            background: #fee2e2;
+            color: #991b1b;
+            border-radius: 10px;
+        }
+
+        .hint {
+            margin-top: 18px;
+            font-size: 13px;
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Smart Cashier</h1>
+    <p>Masuk ke dashboard kasir.</p>
+
+    <form method="post" action="/login">
+        <label>Username</label>
+        <input type="text" name="username" required autofocus>
+
+        <label>Password</label>
+        <input type="password" name="password" required>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <div class="error" th:if="${error}" th:text="${error}"></div>
+
+    <div class="hint">
+        Admin: <b>admin / admin123</b><br>
+        Kasir: <b>kasir / kasir123</b>
+    </div>
+</div>
+</body>
+</html>

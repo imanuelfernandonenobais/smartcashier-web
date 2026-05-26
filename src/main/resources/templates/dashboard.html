@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Smart Cashier</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f6f7fb;
+            margin: 0;
+            color: #111827;
+        }
+
+        header {
+            background: white;
+            padding: 18px 32px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        main {
+            padding: 32px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(160px, 1fr));
+            gap: 18px;
+            margin-top: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+            font-weight: bold;
+        }
+
+        a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .role {
+            display: inline-block;
+            padding: 6px 10px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-radius: 999px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div>
+        <b>Smart Cashier Web</b>
+    </div>
+    <div>
+        <span th:text="${user.namaUser}"></span>
+        <span class="role" th:text="${user.role}"></span>
+        &nbsp; | &nbsp;
+        <a href="/logout">Logout</a>
+    </div>
+</header>
+
+<main>
+    <h1>Dashboard</h1>
+    <p>Selamat datang, <b th:text="${user.namaUser}"></b>.</p>
+
+    <div class="grid">
+        <div class="card">Data Kain</div>
+        <div class="card">Kategori Kain</div>
+        <div class="card">Pelanggan</div>
+        <div class="card">Supplier</div>
+        <div class="card">Transaksi Pembelian</div>
+        <div class="card">Transaksi Penjualan</div>
+        <div class="card">Laporan</div>
+        <div class="card">User</div>
+    </div>
+</main>
+</body>
+</html>
