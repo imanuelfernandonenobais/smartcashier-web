@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="topbar(currentUser)" class="pc-header">
+    <div class="header-wrapper">
+        <div class="me-auto pc-mob-drp">
+            <ul class="list-unstyled">
+                <li class="pc-h-item pc-sidebar-collapse">
+                    <a href="#" class="pc-head-link ms-0" id="sidebar-hide"><i class="ph ph-list"></i></a>
+                </li>
+            </ul>
+        </div>
+        <div class="ms-auto">
+            <ul class="list-unstyled mb-0">
+                <li class="dropdown pc-h-item header-user-profile">
+                    <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                        <img th:src="@{/assets/images/user/avatar-2.jpg}" alt="user-image" class="user-avtar" />
+                    </a>
+                    <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
+                        <div class="dropdown-body">
+                            <div class="px-3 py-2 border-bottom">
+                                <h6 class="mb-1" th:text="${currentUser != null ? currentUser.fullName : 'User'}">User</h6>
+                                <p class="mb-0 text-muted small" th:text="${currentUser != null ? currentUser.role : ''}">ADMIN</p>
+                            </div>
+                            <form th:action="@{/logout}" method="post" class="p-3">
+                                <input th:replace="~{fragments/csrf :: token}" />
+                                <button type="submit" class="btn btn-outline-danger w-100">Logout</button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+</body>
+</html>

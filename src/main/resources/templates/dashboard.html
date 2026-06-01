@@ -1,87 +1,159 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard - Smart Cashier</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f6f7fb;
-            margin: 0;
-            color: #111827;
-        }
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+<body data-pc-header="header-1" data-pc-preset="preset-1" data-pc-sidebar-theme="light" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme="light">
+<div class="loader-bg"><div class="loader-track"><div class="loader-fill"></div></div></div>
+<div th:replace="~{fragments/sidebar :: sidebar(${activeNav}, ${currentUser})}"></div>
+<div th:replace="~{fragments/topbar :: topbar(${currentUser})}"></div>
 
-        header {
-            background: white;
-            padding: 18px 32px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+<div class="pc-container">
+    <div class="pc-content">
+        <div class="page-header">
+            <div class="page-block">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <div class="page-header-title">
+                            <h5 class="mb-0">Dashboard SmartCashier</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        main {
-            padding: 32px;
-        }
+        <div th:replace="~{fragments/alerts :: alerts}"></div>
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(160px, 1fr));
-            gap: 18px;
-            margin-top: 24px;
-        }
+        <div class="row">
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-grd-primary order-card">
+                    <div class="card-body">
+                        <h6 class="text-white">Penjualan Hari Ini</h6>
+                        <h2 class="text-end text-white">
+                            <i class="ph ph-shopping-cart float-start"></i>
+                            <span th:text="${@money.format(dashboard.todaySales)}">Rp0</span>
+                        </h2>
+                        <p class="m-b-0 text-white opacity-75">Omzet kasir pada hari ini</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-grd-secondary order-card">
+                    <div class="card-body">
+                        <h6 class="text-white">Pembelian Hari Ini</h6>
+                        <h2 class="text-end text-white">
+                            <i class="ph ph-basket float-start"></i>
+                            <span th:text="${@money.format(dashboard.todayPurchases)}">Rp0</span>
+                        </h2>
+                        <p class="m-b-0 text-white opacity-75">Belanja stok pada hari ini</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-grd-info order-card">
+                    <div class="card-body">
+                        <h6 class="text-white">Total Produk</h6>
+                        <h2 class="text-end text-white">
+                            <i class="ph ph-package float-start"></i>
+                            <span th:text="${dashboard.productCount}">0</span>
+                        </h2>
+                        <p class="m-b-0 text-white opacity-75">
+                            Pelanggan terdaftar
+                            <span class="float-end" th:text="${dashboard.customerCount}">0</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card bg-grd-warning order-card">
+                    <div class="card-body">
+                        <h6 class="text-white">Stok Rendah</h6>
+                        <h2 class="text-end text-white">
+                            <i class="ph ph-warning-circle float-start"></i>
+                            <span th:text="${#lists.size(dashboard.lowStockProducts)}">0</span>
+                        </h2>
+                        <p class="m-b-0 text-white opacity-75"
+                           th:text="${#lists.isEmpty(dashboard.lowStockProducts) ? 'Stok aman untuk saat ini' : 'Produk perlu segera direstock'}">
+                            Stok aman untuk saat ini
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 22px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-            font-weight: bold;
-        }
-
-        a {
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .role {
-            display: inline-block;
-            padding: 6px 10px;
-            background: #dbeafe;
-            color: #1d4ed8;
-            border-radius: 999px;
-            font-size: 13px;
-        }
-    </style>
-</head>
-<body>
-<header>
-    <div>
-        <b>Smart Cashier Web</b>
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header"><h5>Stok Rendah</h5></div>
+                    <div class="card-body">
+                        <div th:if="${#lists.isEmpty(dashboard.lowStockProducts)}" class="text-muted">Tidak ada stok rendah.</div>
+                        <div class="d-flex justify-content-between border-bottom py-2" th:each="item : ${dashboard.lowStockProducts}">
+                            <div>
+                                <strong th:text="${item.productName}">Produk</strong>
+                                <div class="text-muted small" th:text="${item.unitLabel}">meter</div>
+                            </div>
+                            <div th:text="${item.stockQuantity}">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header"><h5>Transaksi Penjualan Terbaru</h5></div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 js-datatable"
+                                   data-dt-order='[[3, "desc"]]'
+                                   data-dt-paging="false"
+                                   data-dt-searching="false"
+                                   data-dt-info="false"
+                                   data-dt-length-change="false">
+                                <thead><tr><th>Kode</th><th>Pelanggan</th><th>Kasir</th><th>Waktu</th><th>Total</th></tr></thead>
+                                <tbody>
+                                <tr th:each="trx : ${dashboard.recentSales}">
+                                    <td th:text="${trx.code}">PJ</td>
+                                    <td th:text="${trx.counterpart}">Customer</td>
+                                    <td th:text="${trx.userName}">Kasir</td>
+                                    <td th:attr="data-order=${#temporals.format(trx.transactionTime, 'yyyy-MM-dd''T''HH:mm:ss')}"
+                                        th:text="${#temporals.format(trx.transactionTime, 'dd-MM-yyyy HH:mm')}">Tanggal</td>
+                                    <td th:attr="data-order=${trx.totalAmount}"
+                                        th:text="${@money.format(trx.totalAmount)}">Rp0</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(dashboard.recentSales)}"><td colspan="5" class="text-center text-muted">Belum ada transaksi.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h5>Transaksi Pembelian Terbaru</h5></div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 js-datatable"
+                                   data-dt-order='[[3, "desc"]]'
+                                   data-dt-paging="false"
+                                   data-dt-searching="false"
+                                   data-dt-info="false"
+                                   data-dt-length-change="false">
+                                <thead><tr><th>Kode</th><th>Supplier</th><th>User</th><th>Waktu</th><th>Total</th></tr></thead>
+                                <tbody>
+                                <tr th:each="trx : ${dashboard.recentPurchases}">
+                                    <td th:text="${trx.code}">PB</td>
+                                    <td th:text="${trx.counterpart}">Supplier</td>
+                                    <td th:text="${trx.userName}">User</td>
+                                    <td th:attr="data-order=${#temporals.format(trx.transactionTime, 'yyyy-MM-dd''T''HH:mm:ss')}"
+                                        th:text="${#temporals.format(trx.transactionTime, 'dd-MM-yyyy HH:mm')}">Tanggal</td>
+                                    <td th:attr="data-order=${trx.totalAmount}"
+                                        th:text="${@money.format(trx.totalAmount)}">Rp0</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(dashboard.recentPurchases)}"><td colspan="5" class="text-center text-muted">Belum ada transaksi.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div>
-        <span th:text="${user.namaUser}"></span>
-        <span class="role" th:text="${user.role}"></span>
-        &nbsp; | &nbsp;
-        <a href="/logout">Logout</a>
-    </div>
-</header>
-
-<main>
-    <h1>Dashboard</h1>
-    <p>Selamat datang, <b th:text="${user.namaUser}"></b>.</p>
-
-    <div class="grid">
-        <div class="card">Data Kain</div>
-        <div class="card">Kategori Kain</div>
-        <div class="card">Pelanggan</div>
-        <div class="card">Supplier</div>
-        <div class="card">Transaksi Pembelian</div>
-        <div class="card">Transaksi Penjualan</div>
-        <div class="card">Laporan</div>
-        <div class="card">User</div>
-    </div>
-</main>
+</div>
+<th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
 </body>
 </html>

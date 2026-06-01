@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="sidebar(activeNav, currentUser)" class="pc-sidebar">
+    <div class="navbar-wrapper">
+        <div class="m-header">
+            <a th:href="@{/dashboard}" class="b-brand text-primary">
+                <img th:src="@{/assets/images/logo-white.svg}" alt="logo image" class="logo-lg" />
+            </a>
+        </div>
+        <div class="navbar-content">
+            <ul class="pc-navbar">
+                <li class="pc-item pc-caption"><label>Navigation</label></li>
+                <li class="pc-item" th:classappend="${activeNav == 'dashboard'} ? ' active'">
+                    <a th:href="@{/dashboard}" class="pc-link"><span class="pc-micon"><i class="ph ph-gauge"></i></span><span class="pc-mtext">Dashboard</span></a>
+                </li>
+
+                <li class="pc-item pc-caption" th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}"><label>Master Admin</label></li>
+                <li class="pc-item" th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}" th:classappend="${activeNav == 'categories'} ? ' active'">
+                    <a th:href="@{/categories}" class="pc-link"><span class="pc-micon"><i class="ph ph-tag"></i></span><span class="pc-mtext">Kategori</span></a>
+                </li>
+                <li class="pc-item" th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}" th:classappend="${activeNav == 'products'} ? ' active'">
+                    <a th:href="@{/products}" class="pc-link"><span class="pc-micon"><i class="ph ph-package"></i></span><span class="pc-mtext">Produk</span></a>
+                </li>
+                <li class="pc-item" th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}" th:classappend="${activeNav == 'suppliers'} ? ' active'">
+                    <a th:href="@{/suppliers}" class="pc-link"><span class="pc-micon"><i class="ph ph-truck"></i></span><span class="pc-mtext">Supplier</span></a>
+                </li>
+                <li class="pc-item" th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}" th:classappend="${activeNav == 'users'} ? ' active'">
+                    <a th:href="@{/users}" class="pc-link"><span class="pc-micon"><i class="ph ph-users"></i></span><span class="pc-mtext">User</span></a>
+                </li>
+
+                <li class="pc-item pc-caption"><label>Operasional</label></li>
+                <li class="pc-item" th:classappend="${activeNav == 'customers'} ? ' active'">
+                    <a th:href="@{/customers}" class="pc-link"><span class="pc-micon"><i class="ph ph-user-list"></i></span><span class="pc-mtext">Pelanggan</span></a>
+                </li>
+                <li class="pc-item" th:classappend="${activeNav == 'sales'} ? ' active'">
+                    <a th:href="@{/sales}" class="pc-link"><span class="pc-micon"><i class="ph ph-shopping-cart"></i></span><span class="pc-mtext">Penjualan</span></a>
+                </li>
+                <li class="pc-item" th:classappend="${activeNav == 'purchases'} ? ' active'">
+                    <a th:href="@{/purchases}" class="pc-link"><span class="pc-micon"><i class="ph ph-basket"></i></span><span class="pc-mtext">Pembelian</span></a>
+                </li>
+
+                <li class="pc-item pc-caption"><label>Laporan</label></li>
+                <li class="pc-item" th:classappend="${activeNav == 'reports-sales'} ? ' active'">
+                    <a th:href="@{/reports/sales}" class="pc-link"><span class="pc-micon"><i class="ph ph-chart-line"></i></span><span class="pc-mtext">Laporan Penjualan</span></a>
+                </li>
+                <li class="pc-item" th:classappend="${activeNav == 'reports-purchases'} ? ' active'">
+                    <a th:href="@{/reports/purchases}" class="pc-link"><span class="pc-micon"><i class="ph ph-chart-bar"></i></span><span class="pc-mtext">Laporan Pembelian</span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

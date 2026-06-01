@@ -1,105 +1,47 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Login - Smart Cashier</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f3f4f6;
-            min-height: 100vh;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Login')}"></head>
+<body data-pc-header="header-1" data-pc-preset="preset-1" data-pc-sidebar-theme="light" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme="light">
+<div class="loader-bg">
+    <div class="loader-track"><div class="loader-fill"></div></div>
+</div>
 
-        .card {
-            width: 380px;
-            background: white;
-            padding: 32px;
-            border-radius: 18px;
-            box-shadow: 0 12px 35px rgba(0,0,0,0.1);
-        }
+<div class="auth-main v1 bg-grd-primary">
+    <div class="auth-wrapper">
+        <div class="auth-form">
+            <div class="card my-5">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <img th:src="@{/assets/images/logo-dark.svg}" alt="logo" class="img-fluid mb-3" />
+                        <h4 class="f-w-500 mb-1">SmartCashier Login</h4>
+                        <p class="mb-0 text-muted">Masuk ke dashboard kasir berbasis MVC.</p>
+                    </div>
 
-        h1 {
-            margin: 0 0 8px;
-            color: #111827;
-        }
+                    <div class="alert alert-danger" th:if="${param.error}">Username atau password salah.</div>
+                    <div class="alert alert-success" th:if="${param.logout}">Anda berhasil logout.</div>
 
-        p {
-            margin-top: 0;
-            color: #6b7280;
-        }
+                    <form th:action="@{/login}" method="post">
+                        <input th:replace="~{fragments/csrf :: token}" />
+                        <div class="form-group mb-3">
+                            <input type="text" class="form-control" name="username" placeholder="Username" required autofocus />
+                        </div>
+                        <div class="form-group mb-3">
+                            <input type="password" class="form-control" name="password" placeholder="Password" required />
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
 
-        label {
-            display: block;
-            margin-top: 16px;
-            font-weight: bold;
-            color: #374151;
-        }
-
-        input {
-            width: 100%;
-            box-sizing: border-box;
-            margin-top: 8px;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #d1d5db;
-            font-size: 15px;
-        }
-
-        button {
-            width: 100%;
-            margin-top: 24px;
-            padding: 12px;
-            border: 0;
-            border-radius: 10px;
-            background: #2563eb;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        .error {
-            margin-top: 16px;
-            padding: 10px;
-            background: #fee2e2;
-            color: #991b1b;
-            border-radius: 10px;
-        }
-
-        .hint {
-            margin-top: 18px;
-            font-size: 13px;
-            background: #f9fafb;
-            padding: 12px;
-            border-radius: 10px;
-        }
-    </style>
-</head>
-<body>
-<div class="card">
-    <h1>Smart Cashier</h1>
-    <p>Masuk ke dashboard kasir.</p>
-
-    <form method="post" action="/login">
-        <label>Username</label>
-        <input type="text" name="username" required autofocus>
-
-        <label>Password</label>
-        <input type="password" name="password" required>
-
-        <button type="submit">Login</button>
-    </form>
-
-    <div class="error" th:if="${error}" th:text="${error}"></div>
-
-    <div class="hint">
-        Admin: <b>admin / admin123</b><br>
-        Kasir: <b>kasir / kasir123</b>
+                    <!-- <div class="mt-4 p-3 bg-light rounded">
+                        <small class="text-muted d-block">Initial admin account</small>
+                        <strong>admin / admin123</strong>
+                    </div> -->
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
 </body>
 </html>

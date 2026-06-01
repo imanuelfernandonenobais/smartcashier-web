@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+<body data-pc-header="header-1" data-pc-preset="preset-1" data-pc-sidebar-theme="light" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme="light">
+<div th:replace="~{fragments/sidebar :: sidebar(${activeNav}, ${currentUser})}"></div>
+<div th:replace="~{fragments/topbar :: topbar(${currentUser})}"></div>
+<div class="pc-container"><div class="pc-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0">Manajemen User</h4>
+        <a th:href="@{/users/new}" class="btn btn-primary">Tambah User</a>
+    </div>
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+    <div class="card"><div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 js-datatable"
+                   data-dt-order='[[0, "asc"]]'>
+                <thead><tr><th>Nama</th><th>Username</th><th>Role</th><th>Status</th><th class="dt-nosort text-end">Aksi</th></tr></thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.fullName}">Nama</td>
+                    <td th:text="${user.username}">username</td>
+                    <td th:text="${user.role}">ADMIN</td>
+                    <td th:attr="data-order=${user.enabled ? 1 : 0}"><span class="badge bg-light-success" th:text="${user.enabled ? 'Aktif' : 'Nonaktif'}">Aktif</span></td>
+                    <td class="text-end">
+                        <a th:href="@{|/users/${user.id}/edit|}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <form th:action="@{|/users/${user.id}/delete|}" method="post" class="d-inline js-confirm-submit"
+                              data-confirm-title="Hapus user?"
+                              data-confirm-text="User yang dipilih akan dihapus permanen."
+                              data-confirm-confirm-text="Ya, hapus"
+                              data-confirm-cancel-text="Batal">
+                            <input th:replace="~{fragments/csrf :: token}" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div></div>
+</div></div>
+<th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
+</body>
+</html>

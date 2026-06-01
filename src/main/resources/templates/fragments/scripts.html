@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="scripts">
+    <script th:src="@{/assets/js/plugins/popper.min.js}"></script>
+    <script th:src="@{/assets/js/plugins/simplebar.min.js}"></script>
+    <script th:src="@{/assets/js/plugins/bootstrap.min.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/2.3.8/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.3.8/js/dataTables.bootstrap5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:src="@{/assets/js/fonts/custom-font.js}"></script>
+    <script th:src="@{/assets/js/script.js}"></script>
+    <script th:src="@{/assets/js/theme.js}"></script>
+    <script th:src="@{/assets/js/plugins/feather.min.js}"></script>
+    <script th:src="@{/assets/js/smartcashier-alerts.js}"></script>
+    <script>
+        (function () {
+            function parseBoolean(value, fallback) {
+                if (value === undefined) {
+                    return fallback;
+                }
+                return value === 'true';
+            }
+
+            $('.js-datatable').each(function () {
+                const $table = $(this);
+                const noSortTargets = [];
+                const columnCount = $table.find('thead th').length;
+
+                $table.find('thead th').each(function (index) {
+                    if (this.classList.contains('dt-nosort')) {
+                        noSortTargets.push(index);
+                    }
+                });
+
+                const options = {
+                    autoWidth: false,
+                    info: parseBoolean($table.attr('data-dt-info'), true),
+                    lengthChange: parseBoolean($table.attr('data-dt-length-change'), true),
+                    order: $table.attr('data-dt-order') ? JSON.parse($table.attr('data-dt-order')) : [],
+                    paging: parseBoolean($table.attr('data-dt-paging'), true),
+                    pageLength: parseInt($table.attr('data-dt-page-length') || '10', 10),
+                    searching: parseBoolean($table.attr('data-dt-searching'), true),
+                    language: {
+                        emptyTable: 'Belum ada data',
+                        info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+                        infoEmpty: 'Tidak ada data',
+                        lengthMenu: '_MENU_ data per halaman',
+                        search: 'Cari:',
+                        zeroRecords: 'Data tidak ditemukan'
+                    }
+                };
+
+                const $placeholderRow = $table.find('tbody tr').filter(function () {
+                    const $cells = $(this).children('th, td');
+                    const colspan = parseInt($cells.first().attr('colspan') || '1', 10);
+                    return $cells.length === 1 && colspan === columnCount;
+                }).first();
+
+                if ($placeholderRow.length) {
+                    const emptyMessage = $placeholderRow.text().trim();
+                    if (emptyMessage) {
+                        options.language.emptyTable = emptyMessage;
+                    }
+                    $placeholderRow.remove();
+                }
+
+                if (noSortTargets.length > 0) {
+                    options.columnDefs = [{ orderable: false, targets: noSortTargets }];
+                }
+
+                $table.DataTable(options);
+            });
+        }());
+    </script>
+    <script>
+        layout_change('light');
+        layout_sidebar_change('light');
+        change_box_container('false');
+        layout_caption_change('true');
+        layout_rtl_change('false');
+        preset_change('preset-1');
+        header_change('header-1');
+    </script>
+</th:block>
+</body>
+</html>
