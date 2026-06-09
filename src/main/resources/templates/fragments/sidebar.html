@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="sidebar(activeNav, currentUser)" class="pc-sidebar smart-sidebar">
+    <div class="navbar-wrapper">
+
+        <!-- Brand / Logo Card -->
+        <div class="m-header smart-sidebar-brand-wrap">
+            <a th:href="@{/dashboard}" class="b-brand smart-sidebar-brand-card text-decoration-none">
+                <div class="smart-brand-icon">
+                    <i class="ph ph-shopping-cart"></i>
+                </div>
+
+                <div class="smart-brand-text">
+                    <span class="smart-brand-title">SmartCashier</span>
+                    <span class="smart-brand-subtitle">Admin Panel</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="navbar-content smart-sidebar-content">
+            <ul class="pc-navbar">
+
+                <li class="pc-item pc-caption">
+                    <label>NAVIGATION</label>
+                </li>
+
+                <li class="pc-item" th:classappend="${activeNav == 'dashboard'} ? ' active'">
+                    <a th:href="@{/dashboard}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph ph-gauge"></i>
+                        </span>
+                        <span class="pc-mtext">Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="pc-item pc-caption"
+                    th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}">
+                    <label>MASTER ADMIN</label>
+                </li>
+
+                <li class="pc-item"
+                    th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}"
+                    th:classappend="${activeNav == 'categories'} ? ' active'">
+                    <a th:href="@{/categories}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph ph-tag"></i>
+                        </span>
+                        <span class="pc-mtext">Kategori</span>
+                    </a>
+                </li>
+
+                <li class="pc-item"
+                    th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}"
+                    th:classappend="${activeNav == 'products'} ? ' active'">
+                    <a th:href="@{/products}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph ph-cube"></i>
+                        </span>
+                        <span class="pc-mtext">Produk</span>
+                    </a>
+                </li>
+
+                <li class="pc-item"
+                    th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}"
+                    th:classappend="${activeNav == 'suppliers'} ? ' active'">
+                    <a th:href="@{/suppliers}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph ph-truck"></i>
+                        </span>
+                        <span class="pc-mtext">Supplier</span>
+                    </a>
+                </li>
+
+                <li class="pc-item"
+                    th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}"
+                    th:classappend="${activeNav == 'users'} ? ' active'">
+                    <a th:href="@{/users}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph ph-users"></i>
+                        </span>
+                        <span class="pc-mtext">User</span>
+                    </a>
+                </li>
+
+                <li class="pc-item pc-caption">
+                    <label>OPERASIONAL</label>
+                </li>
+
+                <li class="pc-item" th:classappend="${activeNav == 'customers'} ? ' active'">
+                    <a th:href="@{/customers}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph ph-user-list"></i>
+                        </span>
+                        <span class="pc-mtext">Pelanggan</span>
+                    </a>
+                </li>
+
+                <li class="pc-item" th:classappend="${activeNav == 'sales'} ? ' active'">
+                    <a th:href="@{/sales}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph ph-shopping-cart"></i>
+                        </span>
+                        <span class="pc-mtext">Penjualan</span>
+                    </a>
+                </li>
+
+                <li class="pc-item" th:classappend="${activeNav == 'purchases'} ? ' active'">
+                    <a th:href="@{/purchases}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph ph-basket"></i>
+                        </span>
+                        <span class="pc-mtext">Pembelian</span>
+                    </a>
+                </li>
+
+                <li class="pc-item pc-caption">
+                    <label>LAPORAN</label>
+                </li>
+
+                <li class="pc-item" th:classappend="${activeNav == 'reports-sales'} ? ' active'">
+                    <a th:href="@{/reports/sales}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph ph-chart-line"></i>
+                        </span>
+                        <span class="pc-mtext">Laporan Penjualan</span>
+                    </a>
+                </li>
+
+                <li class="pc-item" th:classappend="${activeNav == 'reports-purchases'} ? ' active'">
+                    <a th:href="@{/reports/purchases}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph ph-chart-bar"></i>
+                        </span>
+                        <span class="pc-mtext">Laporan Pembelian</span>
+                    </a>
+                </li>
+
+            </ul>
+
+            <!-- Bottom Info Card -->
+            <div class="smart-sidebar-footer-card">
+                <div class="smart-footer-icon">
+                    <i class="ph ph-star-fill"></i>
+                </div>
+                <div class="smart-footer-text">
+                    Kelola bisnis dengan lebih efisien bersama SmartCashier.
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

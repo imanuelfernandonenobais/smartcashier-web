@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+
+<body data-pc-header="header-1"
+      data-pc-preset="preset-1"
+      data-pc-sidebar-theme="light"
+      data-pc-sidebar-caption="true"
+      data-pc-direction="ltr"
+      data-pc-theme="light">
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activeNav}, ${currentUser})}"></div>
+<div th:replace="~{fragments/topbar :: topbar(${currentUser})}"></div>
+
+<div class="pc-container">
+    <div class="pc-content page-stable">
+
+        <div class="smart-page-header">
+            <div>
+                <h4 class="smart-page-title mb-1">Produk Kain</h4>
+                <p class="smart-page-subtitle mb-0">
+                    Kelola daftar produk kain, kategori, harga, dan stok per satuan.
+                </p>
+            </div>
+
+            <a th:href="@{/products/new}" class="btn btn-primary">
+                + Tambah Produk
+            </a>
+        </div>
+
+        <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+        <div class="smart-panel">
+            <div class="smart-panel-header">
+                <div>
+                    <h5 class="mb-0">
+                        <i class="ph ph-package text-primary me-2"></i>
+                        Daftar Produk
+                    </h5>
+                    <small class="text-muted">Data produk kain yang tersedia di SmartCashier</small>
+                </div>
+            </div>
+
+            <div class="smart-panel-body p-0">
+                <div class="table-responsive smart-table-wrap">
+                    <table class="table smart-table mb-0 js-datatable"
+                           data-dt-order='[[0, "asc"]]'>
+                        <thead>
+                        <tr>
+                            <th>Nama Produk</th>
+                            <th>Kategori</th>
+                            <th class="dt-nosort">Harga / Stok per Satuan</th>
+                            <th class="dt-nosort text-end">Aksi</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="product : ${products}">
+                            <td>
+                                <div class="product-name-wrap">
+                                    <span class="product-icon">
+                                        <i class="ph ph-package"></i>
+                                    </span>
+                                    <div>
+                                        <strong th:text="${product.name}">Nama Produk</strong>
+                                        <small>Produk kain</small>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="category-pill" th:text="${product.category.name}">
+                                    Kategori
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="unit-list">
+                                    <div th:each="value : ${product.unitValues}" class="unit-chip">
+                                        <span class="unit-name" th:text="${value.unitType.label}">meter</span>
+                                        <span class="unit-price" th:text="${@money.format(value.salePrice)}">Rp0</span>
+                                        <span class="unit-stock">
+                                            Stok
+                                            <strong th:text="${value.stockQuantity}">0</strong>
+                                        </span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="text-end">
+                                <a th:href="@{|/products/${product.id}/edit|}"
+                                   class="btn btn-sm btn-outline-primary">
+                                    Edit
+                                </a>
+
+                                <form th:action="@{|/products/${product.id}/delete|}"
+                                      method="post"
+                                      class="d-inline js-confirm-submit"
+                                      data-confirm-title="Hapus produk?"
+                                      data-confirm-text="Produk yang dipilih akan dihapus permanen."
+                                      data-confirm-confirm-text="Ya, hapus"
+                                      data-confirm-cancel-text="Batal">
+
+                                    <input th:replace="~{fragments/csrf :: token}" />
+
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(products)}">
+                            <td colspan="4">
+                                <div class="empty-state py-4">
+                                    <div class="empty-icon">
+                                        <i class="ph ph-package"></i>
+                                    </div>
+                                    <h6>Belum ada produk</h6>
+                                    <p>Tambahkan produk kain pertama untuk mulai mengelola stok.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
+</body>
+</html>

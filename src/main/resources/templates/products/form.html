@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+<body data-pc-header="header-1" data-pc-preset="preset-1" data-pc-sidebar-theme="light" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme="light">
+<div th:replace="~{fragments/sidebar :: sidebar(${activeNav}, ${currentUser})}"></div>
+<div th:replace="~{fragments/topbar :: topbar(${currentUser})}"></div>
+<div class="pc-container"><div class="pc-content">
+    <div class="card"><div class="card-body">
+        <h4 class="mb-4" th:text="${pageTitle}">Form Produk</h4>
+        <div th:replace="~{fragments/alerts :: alerts}"></div>
+        <form th:object="${productForm}" th:action="${productId != null} ? @{|/products/${productId}|} : @{/products}" method="post">
+            <input th:replace="~{fragments/csrf :: token}" />
+            <div class="row">
+                <div class="col-md-6 mb-3"><label class="form-label">Nama Produk</label><input th:field="*{name}" class="form-control" /><div class="text-danger small" th:errors="*{name}"></div></div>
+                <div class="col-md-6 mb-3"><label class="form-label">Kategori</label><select th:field="*{categoryId}" class="form-select"><option value="">Pilih kategori</option><option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option></select><div class="text-danger small" th:errors="*{categoryId}"></div></div>
+            </div>
+            <div class="table-responsive">
+                <table class="table js-datatable"
+                       data-dt-order='[[0, "asc"]]'
+                       data-dt-paging="false"
+                       data-dt-searching="false"
+                       data-dt-info="false"
+                       data-dt-length-change="false">
+                    <thead><tr><th>Satuan</th><th class="dt-nosort">Harga Jual</th><th class="dt-nosort">Stok</th></tr></thead>
+                    <tbody>
+                    <tr th:each="unitForm, iter : *{unitValues}">
+                        <td>
+                            <input type="hidden" th:field="*{unitValues[__${iter.index}__].unitType}" />
+                            <span th:text="${unitForm.unitType.label}">meter</span>
+                        </td>
+                        <td><input th:field="*{unitValues[__${iter.index}__].salePrice}" class="form-control" /></td>
+                        <td><input th:field="*{unitValues[__${iter.index}__].stockQuantity}" class="form-control" /></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex gap-2"><button type="submit" class="btn btn-primary">Simpan</button><a th:href="@{/products}" class="btn btn-light">Batal</a></div>
+        </form>
+    </div></div>
+</div></div>
+<th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
+</body>
+</html>

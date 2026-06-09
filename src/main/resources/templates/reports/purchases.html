@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+<body data-pc-header="header-1" data-pc-preset="preset-1" data-pc-sidebar-theme="light" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme="light">
+<div th:replace="~{fragments/sidebar :: sidebar(${activeNav}, ${currentUser})}"></div>
+<div th:replace="~{fragments/topbar :: topbar(${currentUser})}"></div>
+<div class="pc-container"><div class="pc-content">
+    <div class="card"><div class="card-header d-flex justify-content-between"><h5>Laporan Pembelian</h5><strong th:text="${@money.format(grandTotal)}">Rp0</strong></div><div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 js-datatable"
+                   data-dt-order='[[1, "desc"]]'>
+                <thead><tr><th>Kode</th><th>Tanggal</th><th>Supplier</th><th>User</th><th>Total</th></tr></thead>
+                <tbody>
+                <tr th:each="trx : ${transactions}">
+                    <td th:text="${trx.code}">PB</td>
+                    <td th:attr="data-order=${#temporals.format(trx.transactionTime, 'yyyy-MM-dd''T''HH:mm:ss')}"
+                        th:text="${#temporals.format(trx.transactionTime, 'dd-MM-yyyy HH:mm')}">Tanggal</td>
+                    <td th:text="${trx.supplier != null ? trx.supplier.name : '-'}">Supplier</td>
+                    <td th:text="${trx.user.fullName}">User</td>
+                    <td th:attr="data-order=${trx.totalAmount}"
+                        th:text="${@money.format(trx.totalAmount)}">Rp0</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div></div>
+</div></div>
+<th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
+</body>
+</html>

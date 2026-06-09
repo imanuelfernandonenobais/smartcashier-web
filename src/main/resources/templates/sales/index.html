@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+<body data-pc-header="header-1" data-pc-preset="preset-1" data-pc-sidebar-theme="light" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme="light">
+<div th:replace="~{fragments/sidebar :: sidebar(${activeNav}, ${currentUser})}"></div>
+<div th:replace="~{fragments/topbar :: topbar(${currentUser})}"></div>
+<div class="pc-container"><div class="pc-content">
+    <div class="row">
+        <div class="col-lg-5">
+            <div class="card"><div class="card-body">
+                <h4 class="mb-4">Tambah Item Penjualan</h4>
+                <div th:replace="~{fragments/alerts :: alerts}"></div>
+                <form th:object="${saleItemForm}" th:action="@{/sales/items}" method="post">
+                    <input th:replace="~{fragments/csrf :: token}" />
+                    <div class="mb-3"><label class="form-label">Produk</label><select th:field="*{productId}" class="form-select"><option value="">Pilih produk</option><option th:each="product : ${products}" th:value="${product.id}" th:text="${product.name}"></option></select></div>
+                    <div class="mb-3"><label class="form-label">Satuan</label><select th:field="*{unitType}" class="form-select"><option value="">Pilih satuan</option><option th:each="unitType : ${unitTypes}" th:value="${unitType}" th:text="${unitType.label}"></option></select></div>
+                    <div class="mb-3"><label class="form-label">Jumlah</label><input th:field="*{quantity}" class="form-control" /></div>
+                    <div class="text-danger small mb-3" th:if="${#fields.hasAnyErrors()}" th:errors="*{productId}"></div>
+                    <button type="submit" class="btn btn-primary">Tambah Item</button>
+                </form>
+            </div></div>
+        </div>
+        <div class="col-lg-7">
+            <div class="card"><div class="card-body">
+                <h4 class="mb-4">Draft Penjualan</h4>
+                <div class="table-responsive mb-3">
+                    <table class="table table-hover js-datatable"
+                           data-dt-order='[[0, "asc"]]'
+                           data-dt-paging="false"
+                           data-dt-searching="false"
+                           data-dt-info="false"
+                           data-dt-length-change="false">
+                        <thead><tr><th>Produk</th><th>Satuan</th><th>Qty</th><th>Harga</th><th>Subtotal</th><th class="dt-nosort"></th></tr></thead>
+                        <tbody>
+                        <tr th:each="item, iter : ${saleDraft.items}">
+                            <td th:text="${item.productName}">Produk</td>
+                            <td th:text="${item.unitType.label}">meter</td>
+                            <td th:attr="data-order=${item.quantity}" th:text="${item.quantity}">1</td>
+                            <td th:attr="data-order=${item.unitPrice}" th:text="${@money.format(item.unitPrice)}">Rp0</td>
+                            <td th:attr="data-order=${item.subtotal}" th:text="${@money.format(item.subtotal)}">Rp0</td>
+                            <td>
+                                <form th:action="@{|/sales/items/${iter.index}/remove|}" method="post" class="js-confirm-submit"
+                                      data-confirm-title="Hapus item draft?"
+                                      data-confirm-text="Item ini akan dihapus dari draft penjualan."
+                                      data-confirm-confirm-text="Ya, hapus"
+                                      data-confirm-cancel-text="Batal">
+                                    <input th:replace="~{fragments/csrf :: token}" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(saleDraft.items)}"><td colspan="6" class="text-center text-muted">Belum ada item.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <form th:object="${saleCheckoutForm}" th:action="@{/sales/checkout}" method="post" class="row g-3">
+                    <input th:replace="~{fragments/csrf :: token}" />
+                    <div class="col-md-6"><label class="form-label">Pelanggan</label><select th:field="*{customerId}" class="form-select"><option value="">Umum / tanpa pelanggan</option><option th:each="customer : ${customers}" th:value="${customer.id}" th:text="${customer.name}"></option></select></div>
+                    <div class="col-md-6"><label class="form-label">Bayar</label><input th:field="*{amountPaid}" class="form-control" /></div>
+                    <div class="col-md-6"><div class="border rounded p-3 bg-light">Total: <strong th:text="${@money.format(saleDraft.totalAmount)}">Rp0</strong></div></div>
+                    <div class="col-md-6"><div class="border rounded p-3 bg-light">Kembalian: <strong th:text="${@money.format(saleDraft.changeAmount)}">Rp0</strong></div></div>
+                    <div class="col-12 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Simpan Transaksi</button>
+                    </div>
+                </form>
+                <form th:action="@{/sales/cancel}" method="post" class="mt-2 js-confirm-submit"
+                      data-confirm-title="Bersihkan draft penjualan?"
+                      data-confirm-text="Semua item di draft penjualan akan dihapus."
+                      data-confirm-confirm-text="Ya, bersihkan"
+                      data-confirm-cancel-text="Batal">
+                    <input th:replace="~{fragments/csrf :: token}" />
+                    <button type="submit" class="btn btn-light">Bersihkan Draft</button>
+                </form>
+            </div></div>
+        </div>
+    </div>
+</div></div>
+<th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
+</body>
+</html>

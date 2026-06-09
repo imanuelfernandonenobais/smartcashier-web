@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="topbar(currentUser)" class="pc-header">
+    <div class="header-wrapper smart-topbar">
+
+        <!-- KIRI: Hamburger + Search -->
+        <div class="topbar-left">
+            <a href="#" class="pc-head-link topbar-menu-btn" id="smart-sidebar-toggle">
+                <i class="ph ph-list"></i>
+            </a>
+
+            <div class="topbar-search">
+                <i class="ph ph-magnifying-glass"></i>
+                <span>Cari menu, data, laporan...</span>
+            </div>
+        </div>
+
+        <!-- KANAN: Notifikasi + User -->
+        <div class="topbar-right">
+
+            <button type="button" class="topbar-notification">
+                <i class="ph ph-bell"></i>
+                <span>3</span>
+            </button>
+
+            <div class="dropdown header-user-profile">
+                <a class="topbar-user dropdown-toggle arrow-none"
+                   data-bs-toggle="dropdown"
+                   href="#"
+                   role="button"
+                   aria-expanded="false">
+
+                    <img th:src="@{/assets/images/user/avatar-2.jpg}"
+                         alt="user-image"
+                         class="topbar-avatar" />
+
+                    <div class="topbar-user-info">
+                        <strong th:text="${currentUser != null ? currentUser.fullName : 'User'}">
+                            User
+                        </strong>
+                        <small th:text="${currentUser != null ? currentUser.role : 'ADMIN'}">
+                            ADMIN
+                        </small>
+                    </div>
+
+                    <i class="ph ph-caret-down topbar-caret"></i>
+                </a>
+
+                <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
+                    <div class="dropdown-body">
+
+                        <div class="topbar-dropdown-profile">
+                            <img th:src="@{/assets/images/user/avatar-2.jpg}"
+                                 alt="user-image"
+                                 class="topbar-dropdown-avatar" />
+
+                            <div>
+                                <h6 class="mb-1"
+                                    th:text="${currentUser != null ? currentUser.fullName : 'User'}">
+                                    User
+                                </h6>
+                                <p class="mb-0 text-muted small"
+                                   th:text="${currentUser != null ? currentUser.role : 'ADMIN'}">
+                                    ADMIN
+                                </p>
+                            </div>
+                        </div>
+
+                        <form th:action="@{/logout}" method="post" class="p-3">
+                            <input th:replace="~{fragments/csrf :: token}" />
+
+                            <button type="submit" class="btn btn-outline-danger w-100">
+                                <i class="ph ph-sign-out me-1"></i>
+                                Logout
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+</body>
+</html>

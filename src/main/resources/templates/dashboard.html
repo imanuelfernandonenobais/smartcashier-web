@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+
+<body data-pc-header="header-1"
+      data-pc-preset="preset-1"
+      data-pc-sidebar-theme="light"
+      data-pc-sidebar-caption="true"
+      data-pc-direction="ltr"
+      data-pc-theme="light">
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activeNav}, ${currentUser})}"></div>
+<div th:replace="~{fragments/topbar :: topbar(${currentUser})}"></div>
+
+<div class="pc-container">
+    <div class="pc-content smart-dashboard-page">
+
+        <div class="smart-dashboard-header">
+            <div>
+                <h2>Dashboard SmartCashier</h2>
+                <p>Ringkasan informasi bisnis Anda hari ini.</p>
+            </div>
+
+            <div class="smart-date-chip">
+                <i class="ph ph-calendar-blank"></i>
+                <span>Hari Ini</span>
+            </div>
+        </div>
+
+        <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+        <div class="smart-stats-grid">
+            <div class="smart-stat-card stat-blue">
+                <div class="stat-top">
+                    <div class="stat-icon"><i class="ph ph-shopping-cart"></i></div>
+                    <i class="ph ph-dots-three-vertical stat-menu"></i>
+                </div>
+                <h6>Penjualan Hari Ini</h6>
+                <h3 th:text="${@money.format(dashboard.todaySales)}">Rp0</h3>
+                <p class="stat-up">↗ 12% dari kemarin</p>
+                <div class="stat-wave"></div>
+            </div>
+
+            <div class="smart-stat-card stat-green">
+                <div class="stat-top">
+                    <div class="stat-icon"><i class="ph ph-basket"></i></div>
+                    <i class="ph ph-dots-three-vertical stat-menu"></i>
+                </div>
+                <h6>Pembelian Hari Ini</h6>
+                <h3 th:text="${@money.format(dashboard.todayPurchases)}">Rp0</h3>
+                <p>— 0% dari kemarin</p>
+                <div class="stat-wave"></div>
+            </div>
+
+            <div class="smart-stat-card stat-purple">
+                <div class="stat-top">
+                    <div class="stat-icon"><i class="ph ph-cube"></i></div>
+                    <i class="ph ph-dots-three-vertical stat-menu"></i>
+                </div>
+                <h6>Total Produk</h6>
+                <h3 th:text="${dashboard.productCount}">0</h3>
+                <p>
+                    <span th:text="${dashboard.customerCount}">0</span>
+                    pelanggan terdaftar
+                </p>
+                <div class="stat-wave"></div>
+            </div>
+
+            <div class="smart-stat-card stat-orange">
+                <div class="stat-top">
+                    <div class="stat-icon"><i class="ph ph-warning-circle"></i></div>
+                    <i class="ph ph-dots-three-vertical stat-menu"></i>
+                </div>
+                <h6>Stok Rendah</h6>
+                <h3 th:text="${#lists.size(dashboard.lowStockProducts)}">0</h3>
+                <p th:text="${#lists.isEmpty(dashboard.lowStockProducts) ? 'Stok aman untuk saat ini' : 'Produk perlu segera direstock'}">
+                    Produk perlu segera direstock
+                </p>
+                <div class="stat-wave"></div>
+            </div>
+        </div>
+
+        <div class="smart-dashboard-grid">
+            <div class="smart-panel smart-lowstock-panel">
+                <div class="smart-panel-header">
+                    <div>
+                        <h5>
+                            <i class="ph ph-warning-circle text-warning"></i>
+                            Stok Rendah
+                        </h5>
+                        <p>Produk yang perlu diperhatikan</p>
+                    </div>
+                    <a th:href="@{/products}" class="smart-see-all">Lihat Semua →</a>
+                </div>
+
+                <div class="smart-panel-body">
+                    <div th:if="${#lists.isEmpty(dashboard.lowStockProducts)}" class="empty-state">
+                        Tidak ada stok rendah.
+                    </div>
+
+                    <div class="lowstock-item" th:each="item : ${dashboard.lowStockProducts}">
+                        <div class="lowstock-left">
+                            <div class="lowstock-icon">
+                                <i class="ph ph-cube"></i>
+                            </div>
+                            <div>
+                                <strong th:text="${item.productName}">Produk</strong>
+                                <span th:text="${item.unitLabel}">roll</span>
+                            </div>
+                        </div>
+
+                        <div class="lowstock-badge">
+                            <strong th:text="${item.stockQuantity}">0</strong>
+                            <span>stok tersisa</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="smart-panel">
+                <div class="smart-panel-header">
+                    <div>
+                        <h5>
+                            <i class="ph ph-receipt text-primary"></i>
+                            Transaksi Penjualan Terbaru
+                        </h5>
+                        <p>Daftar transaksi penjualan terakhir</p>
+                    </div>
+                    <a th:href="@{/sales}" class="smart-see-all">Lihat Semua →</a>
+                </div>
+
+                <div class="smart-panel-body p-0">
+                    <div class="table-responsive">
+                        <table class="table smart-dashboard-table mb-0">
+                            <thead>
+                            <tr>
+                                <th>Kode</th>
+                                <th>Pelanggan</th>
+                                <th>Kasir</th>
+                                <th>Waktu</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="trx : ${dashboard.recentSales}">
+                                <td><strong th:text="${trx.code}">PJ</strong></td>
+                                <td th:text="${trx.counterpart}">Customer</td>
+                                <td th:text="${trx.userName}">Kasir</td>
+                                <td th:text="${#temporals.format(trx.transactionTime, 'dd-MM-yyyy HH:mm')}">Tanggal</td>
+                                <td><strong th:text="${@money.format(trx.totalAmount)}">Rp0</strong></td>
+                                <td><span class="status-pill status-success">Selesai</span></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(dashboard.recentSales)}">
+                                <td colspan="6" class="text-center text-muted py-4">Belum ada transaksi.</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="smart-table-footer">
+                        <span>Menampilkan transaksi terbaru</span>
+                        <div class="smart-pagination">
+                            <button>‹</button>
+                            <button class="active">1</button>
+                            <button>›</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="smart-panel smart-purchase-panel">
+                <div class="smart-panel-header">
+                    <div>
+                        <h5>
+                            <i class="ph ph-basket text-success"></i>
+                            Transaksi Pembelian Terbaru
+                        </h5>
+                        <p>Daftar transaksi pembelian terakhir</p>
+                    </div>
+                    <a th:href="@{/purchases}" class="smart-see-all">Lihat Semua →</a>
+                </div>
+
+                <div class="smart-panel-body p-0">
+                    <div class="table-responsive">
+                        <table class="table smart-dashboard-table mb-0">
+                            <thead>
+                            <tr>
+                                <th>Kode</th>
+                                <th>Supplier</th>
+                                <th>User</th>
+                                <th>Waktu</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="trx : ${dashboard.recentPurchases}">
+                                <td><strong th:text="${trx.code}">PB</strong></td>
+                                <td th:text="${trx.counterpart}">Supplier</td>
+                                <td th:text="${trx.userName}">User</td>
+                                <td th:text="${#temporals.format(trx.transactionTime, 'dd-MM-yyyy HH:mm')}">Tanggal</td>
+                                <td><strong th:text="${@money.format(trx.totalAmount)}">Rp0</strong></td>
+                                <td><span class="status-pill status-info">Masuk</span></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(dashboard.recentPurchases)}">
+                                <td colspan="6" class="text-center text-muted py-4">Belum ada transaksi.</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="smart-table-footer">
+                        <span>Menampilkan pembelian terbaru</span>
+                        <div class="smart-pagination">
+                            <button>‹</button>
+                            <button class="active">1</button>
+                            <button>›</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
+</body>
+</html>

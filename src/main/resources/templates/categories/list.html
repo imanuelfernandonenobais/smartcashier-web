@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
+
+<body data-pc-header="header-1"
+      data-pc-preset="preset-1"
+      data-pc-sidebar-theme="light"
+      data-pc-sidebar-caption="true"
+      data-pc-direction="ltr"
+      data-pc-theme="light">
+
+<div th:replace="~{fragments/sidebar :: sidebar(${activeNav}, ${currentUser})}"></div>
+<div th:replace="~{fragments/topbar :: topbar(${currentUser})}"></div>
+
+<div class="pc-container">
+    <div class="pc-content page-stable">
+
+        <div class="smart-page-header">
+            <div>
+                <h4 class="smart-page-title mb-1">Kategori Produk</h4>
+                <p class="smart-page-subtitle mb-0">
+                    Kelola daftar kategori kain pada SmartCashier.
+                </p>
+            </div>
+
+            <a th:href="@{/categories/new}" class="btn btn-primary">
+                + Tambah Kategori
+            </a>
+        </div>
+
+        <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+        <div class="smart-panel">
+            <div class="smart-panel-header">
+                <div>
+                    <h5 class="mb-0">
+                        <i class="ph ph-tag text-primary me-2"></i>
+                        Daftar Kategori
+                    </h5>
+                    <small class="text-muted">Data kategori kain yang tersedia di SmartCashier</small>
+                </div>
+            </div>
+
+            <div class="smart-panel-body p-0">
+                <div class="table-responsive smart-table-wrap">
+
+                    <table class="table smart-table mb-0 js-datatable"
+                           data-dt-order='[[0, "asc"]]'>
+                        <thead>
+                        <tr>
+                            <th>Nama Kategori</th>
+                            <th class="dt-nosort text-end">Aksi</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="category : ${categories}">
+                            <td>
+                                <div class="category-name-wrap">
+                                    <span class="category-icon">✦</span>
+                                    <div>
+                                        <strong th:text="${category.name}">Kategori</strong>
+                                        <small>Jenis kategori kain</small>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="text-end">
+                                <a th:href="@{|/categories/${category.id}/edit|}"
+                                   class="btn btn-sm btn-outline-primary">
+                                    Edit
+                                </a>
+
+                                <form th:action="@{|/categories/${category.id}/delete|}"
+                                      method="post"
+                                      class="d-inline js-confirm-submit"
+                                      data-confirm-title="Hapus kategori?"
+                                      data-confirm-text="Kategori yang dipilih akan dihapus permanen."
+                                      data-confirm-confirm-text="Ya, hapus"
+                                      data-confirm-cancel-text="Batal">
+
+                                    <input th:replace="~{fragments/csrf :: token}" />
+
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(categories)}">
+                            <td colspan="2">
+                                <div class="empty-state py-4">
+                                    <div class="empty-icon">
+                                        <i class="ph ph-tag"></i>
+                                    </div>
+                                    <h6>Belum ada kategori</h6>
+                                    <p>Tambahkan kategori kain pertama untuk mulai mengelola produk.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
+</body>
+</html>
