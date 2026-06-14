@@ -22106,7 +22106,7 @@ body {
 }
 
 .smart-purchase-panel {
-  display: none !important;
+  grid-column: 1 / -1 !important;
 }
 
 .smart-panel {
@@ -22298,27 +22298,6 @@ body {
 }
 
 /* =========================
-   COLLAPSE SIDEBAR
-   ========================= */
-
-body.smart-sidebar-collapsed .pc-sidebar,
-body.smart-sidebar-collapsed .pc-sidebar.smart-sidebar {
-  transform: translateX(-100%) !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-}
-
-body.smart-sidebar-collapsed .pc-header {
-  left: 0 !important;
-  width: 100% !important;
-}
-
-body.smart-sidebar-collapsed .pc-container {
-  margin-left: 0 !important;
-  width: 100% !important;
-}
-
-/* =========================
    RESPONSIVE
    ========================= */
 
@@ -22491,6 +22470,7 @@ body.smart-sidebar-collapsed .pc-container {
 .smart-sidebar .pc-caption {
   margin: 0 0 8px !important;
   padding: 0 !important;
+  position: relative !important;
 }
 
 .pc-caption:not(:first-child),
@@ -22498,16 +22478,35 @@ body.smart-sidebar-collapsed .pc-container {
   margin-top: 18px !important;
 }
 
+.pc-caption::after,
+.smart-sidebar .pc-caption::after {
+  top: 50% !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: auto !important;
+  background: #e6ebf3 !important;
+  transform: translateY(-50%) !important;
+}
+
+.pc-caption:first-child::after,
+.smart-sidebar .pc-caption:first-child::after {
+  display: none !important;
+}
+
 .pc-caption label,
 .smart-sidebar .pc-caption label {
-  display: block !important;
+  display: inline-block !important;
   margin: 0 !important;
+  padding-right: 12px !important;
   font-size: 11px !important;
   font-weight: 850 !important;
   letter-spacing: 2.2px !important;
   line-height: 1.2 !important;
   color: #7d879f !important;
   text-transform: uppercase !important;
+  position: relative !important;
+  z-index: 1 !important;
+  background: var(--pc-sidebar-background) !important;
 }
 
 .pc-item,
@@ -22805,13 +22804,7 @@ body.smart-sidebar-collapsed .pc-container {
 }
 
 .stat-wave {
-  position: absolute !important;
-  left: 64px !important;
-  right: 24px !important;
-  bottom: 18px !important;
-  height: 50px !important;
-  opacity: .95 !important;
-  pointer-events: none !important;
+  display: none !important;
 }
 
 .dashboard-bottom-grid,
@@ -23231,9 +23224,9 @@ body.smart-sidebar-collapsed .pc-container {
     visibility: hidden !important;
   }
 
-  body:not(.smart-sidebar-collapsed) .pc-sidebar,
-  body:not(.smart-sidebar-collapsed) .pc-sidebar.smart-sidebar,
-  body:not(.smart-sidebar-collapsed) .smart-sidebar {
+  .pc-sidebar.mob-sidebar-active,
+  .pc-sidebar.smart-sidebar.mob-sidebar-active,
+  .smart-sidebar.mob-sidebar-active {
     transform: translateX(0) !important;
     opacity: 1 !important;
     visibility: visible !important;
@@ -23273,6 +23266,10 @@ body.smart-sidebar-collapsed .pc-container {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Duplicate SmartCashier override block disabled.
+   Keep the canonical block above as the single source of truth. */
+@media not all {
 
 /* =========================================================
    FORCE DASHBOARD MATCH TARGET IMAGE
@@ -24108,5 +24105,6 @@ body.smart-sidebar-collapsed .pc-container {
   .smart-dashboard-page {
     padding: 28px 18px !important;
   }
+}
 }
 

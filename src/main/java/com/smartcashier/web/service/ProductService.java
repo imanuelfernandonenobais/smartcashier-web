@@ -27,11 +27,7 @@ public class ProductService {
     private final ProductCategoryRepository categoryRepository;
     private final ProductUnitValueRepository productUnitValueRepository;
 
-    public ProductService(
-            ProductRepository productRepository,
-            ProductCategoryRepository categoryRepository,
-            ProductUnitValueRepository productUnitValueRepository
-    ) {
+    public ProductService(ProductRepository productRepository, ProductCategoryRepository categoryRepository, ProductUnitValueRepository productUnitValueRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.productUnitValueRepository = productUnitValueRepository;
@@ -42,8 +38,7 @@ public class ProductService {
     }
 
     public Product getById(Long id) {
-        return productRepository.findDetailedById(id)
-                .orElseThrow(() -> new NotFoundException("Produk tidak ditemukan."));
+        return productRepository.findDetailedById(id).orElseThrow(() -> new NotFoundException("Produk tidak ditemukan."));
     }
 
     @Transactional
@@ -51,23 +46,19 @@ public class ProductService {
         if (productRepository.existsByNameIgnoreCase(form.getName())) {
             throw new BusinessException("Nama produk sudah digunakan.");
         }
-
         Product product = new Product();
         apply(product, form);
-
         return productRepository.save(product);
     }
 
     @Transactional
     public Product update(Long id, ProductForm form) {
         Product product = getById(id);
-
         if (productRepository.existsByNameIgnoreCaseAndIdNot(form.getName(), id)) {
             throw new BusinessException("Nama produk sudah digunakan.");
         }
-
+        product.getUnitValues().clear();
         apply(product, form);
-
         return productRepository.save(product);
     }
 
@@ -81,22 +72,14 @@ public class ProductService {
     }
 
     public List<LowStockView> findLowStockProducts(BigDecimal threshold) {
-        return productUnitValueRepository
-                .findTop5ByStockQuantityLessThanOrderByStockQuantityAsc(threshold)
-                .stream()
-                .map(value -> new LowStockView(
-                        value.getProduct().getName(),
-                        value.getUnitType().getLabel(),
-                        value.getStockQuantity()
-                ))
+        return productUnitValueRepository.findTop5ByStockQuantityLessThanOrderByStockQuantityAsc(threshold).stream()
+                .map(value -> new LowStockView(value.getProduct().getName(), value.getUnitType().getLabel(), value.getStockQuantity()))
                 .toList();
     }
 
     public ProductUnitValue getUnitValue(Product product, UnitType unitType) {
         return product.findUnitValue(unitType)
-                .orElseThrow(() -> new BusinessException(
-                        "Satuan tidak tersedia untuk produk " + product.getName() + "."
-                ));
+                .orElseThrow(() -> new BusinessException("Satuan tidak tersedia untuk produk " + product.getName() + "."));
     }
 
     private void apply(Product product, ProductForm form) {
@@ -107,48 +90,21 @@ public class ProductService {
         product.setCategory(category);
 
         Map<UnitType, ProductUnitForm> valuesByUnit = new EnumMap<>(UnitType.class);
-
         for (ProductUnitForm unitForm : form.getUnitValues()) {
-            if (unitForm.getUnitType() == null) {
-                throw new BusinessException("Satuan produk tidak valid.");
-            }
-
             valuesByUnit.put(unitForm.getUnitType(), unitForm);
         }
 
         for (UnitType unitType : UnitType.values()) {
             ProductUnitForm unitForm = valuesByUnit.get(unitType);
-
             if (unitForm == null) {
                 throw new BusinessException("Semua satuan produk harus tersedia.");
             }
 
-            if (unitForm.getSalePrice() == null) {
-                throw new BusinessException("Harga jual untuk satuan " + unitType.getLabel() + " wajib diisi.");
-            }
-
-            if (unitForm.getStockQuantity() == null) {
-                throw new BusinessException("Stok untuk satuan " + unitType.getLabel() + " wajib diisi.");
-            }
-
-            if (unitForm.getSalePrice().compareTo(BigDecimal.ZERO) < 0) {
-                throw new BusinessException("Harga jual untuk satuan " + unitType.getLabel() + " tidak boleh minus.");
-            }
-
-            if (unitForm.getStockQuantity().compareTo(BigDecimal.ZERO) < 0) {
-                throw new BusinessException("Stok untuk satuan " + unitType.getLabel() + " tidak boleh minus.");
-            }
-
-            ProductUnitValue unitValue = product.findUnitValue(unitType)
-                    .orElseGet(() -> {
-                        ProductUnitValue newValue = new ProductUnitValue();
-                        newValue.setUnitType(unitType);
-                        product.addUnitValue(newValue);
-                        return newValue;
-                    });
-
+            ProductUnitValue unitValue = new ProductUnitValue();
+            unitValue.setUnitType(unitType);
             unitValue.setSalePrice(unitForm.getSalePrice());
             unitValue.setStockQuantity(unitForm.getStockQuantity());
+            product.addUnitValue(unitValue);
         }
     }
 }

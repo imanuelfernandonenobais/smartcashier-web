@@ -1,20 +1,17 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head :: head(${pageTitle})}"></head>
-
 <body data-pc-header="header-1"
       data-pc-preset="preset-1"
       data-pc-sidebar-theme="light"
       data-pc-sidebar-caption="true"
       data-pc-direction="ltr"
       data-pc-theme="light">
-
 <div th:replace="~{fragments/sidebar :: sidebar(${activeNav}, ${currentUser})}"></div>
 <div th:replace="~{fragments/topbar :: topbar(${currentUser})}"></div>
 
 <div class="pc-container">
     <div class="pc-content smart-dashboard-page">
-
         <div class="smart-dashboard-header">
             <div>
                 <h2>Dashboard SmartCashier</h2>
@@ -37,7 +34,7 @@
                 </div>
                 <h6>Penjualan Hari Ini</h6>
                 <h3 th:text="${@money.format(dashboard.todaySales)}">Rp0</h3>
-                <p class="stat-up">↗ 12% dari kemarin</p>
+                <p class="stat-up">Naik 12% dari kemarin</p>
                 <div class="stat-wave"></div>
             </div>
 
@@ -48,7 +45,7 @@
                 </div>
                 <h6>Pembelian Hari Ini</h6>
                 <h3 th:text="${@money.format(dashboard.todayPurchases)}">Rp0</h3>
-                <p>— 0% dari kemarin</p>
+                <p>Stabil dari kemarin</p>
                 <div class="stat-wave"></div>
             </div>
 
@@ -90,7 +87,7 @@
                         </h5>
                         <p>Produk yang perlu diperhatikan</p>
                     </div>
-                    <a th:href="@{/products}" class="smart-see-all">Lihat Semua →</a>
+                    <a th:href="@{/products}" class="smart-see-all">Lihat Semua -></a>
                 </div>
 
                 <div class="smart-panel-body">
@@ -126,12 +123,17 @@
                         </h5>
                         <p>Daftar transaksi penjualan terakhir</p>
                     </div>
-                    <a th:href="@{/sales}" class="smart-see-all">Lihat Semua →</a>
+                    <a th:href="@{/sales}" class="smart-see-all">Lihat Semua -></a>
                 </div>
 
                 <div class="smart-panel-body p-0">
                     <div class="table-responsive">
-                        <table class="table smart-dashboard-table mb-0">
+                        <table class="table smart-dashboard-table mb-0 js-datatable"
+                               data-dt-order='[[3, "desc"]]'
+                               data-dt-paging="false"
+                               data-dt-searching="false"
+                               data-dt-info="false"
+                               data-dt-length-change="false">
                             <thead>
                             <tr>
                                 <th>Kode</th>
@@ -139,7 +141,7 @@
                                 <th>Kasir</th>
                                 <th>Waktu</th>
                                 <th>Total</th>
-                                <th>Status</th>
+                                <th class="dt-nosort">Status</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -147,8 +149,11 @@
                                 <td><strong th:text="${trx.code}">PJ</strong></td>
                                 <td th:text="${trx.counterpart}">Customer</td>
                                 <td th:text="${trx.userName}">Kasir</td>
-                                <td th:text="${#temporals.format(trx.transactionTime, 'dd-MM-yyyy HH:mm')}">Tanggal</td>
-                                <td><strong th:text="${@money.format(trx.totalAmount)}">Rp0</strong></td>
+                                <td th:attr="data-order=${#temporals.format(trx.transactionTime, 'yyyy-MM-dd''T''HH:mm:ss')}"
+                                    th:text="${#temporals.format(trx.transactionTime, 'dd-MM-yyyy HH:mm')}">Tanggal</td>
+                                <td th:attr="data-order=${trx.totalAmount}">
+                                    <strong th:text="${@money.format(trx.totalAmount)}">Rp0</strong>
+                                </td>
                                 <td><span class="status-pill status-success">Selesai</span></td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(dashboard.recentSales)}">
@@ -156,14 +161,6 @@
                             </tr>
                             </tbody>
                         </table>
-                    </div>
-                    <div class="smart-table-footer">
-                        <span>Menampilkan transaksi terbaru</span>
-                        <div class="smart-pagination">
-                            <button>‹</button>
-                            <button class="active">1</button>
-                            <button>›</button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -177,12 +174,17 @@
                         </h5>
                         <p>Daftar transaksi pembelian terakhir</p>
                     </div>
-                    <a th:href="@{/purchases}" class="smart-see-all">Lihat Semua →</a>
+                    <a th:href="@{/purchases}" class="smart-see-all">Lihat Semua -></a>
                 </div>
 
                 <div class="smart-panel-body p-0">
                     <div class="table-responsive">
-                        <table class="table smart-dashboard-table mb-0">
+                        <table class="table smart-dashboard-table mb-0 js-datatable"
+                               data-dt-order='[[3, "desc"]]'
+                               data-dt-paging="false"
+                               data-dt-searching="false"
+                               data-dt-info="false"
+                               data-dt-length-change="false">
                             <thead>
                             <tr>
                                 <th>Kode</th>
@@ -190,7 +192,7 @@
                                 <th>User</th>
                                 <th>Waktu</th>
                                 <th>Total</th>
-                                <th>Status</th>
+                                <th class="dt-nosort">Status</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -198,8 +200,11 @@
                                 <td><strong th:text="${trx.code}">PB</strong></td>
                                 <td th:text="${trx.counterpart}">Supplier</td>
                                 <td th:text="${trx.userName}">User</td>
-                                <td th:text="${#temporals.format(trx.transactionTime, 'dd-MM-yyyy HH:mm')}">Tanggal</td>
-                                <td><strong th:text="${@money.format(trx.totalAmount)}">Rp0</strong></td>
+                                <td th:attr="data-order=${#temporals.format(trx.transactionTime, 'yyyy-MM-dd''T''HH:mm:ss')}"
+                                    th:text="${#temporals.format(trx.transactionTime, 'dd-MM-yyyy HH:mm')}">Tanggal</td>
+                                <td th:attr="data-order=${trx.totalAmount}">
+                                    <strong th:text="${@money.format(trx.totalAmount)}">Rp0</strong>
+                                </td>
                                 <td><span class="status-pill status-info">Masuk</span></td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(dashboard.recentPurchases)}">
@@ -208,18 +213,9 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="smart-table-footer">
-                        <span>Menampilkan pembelian terbaru</span>
-                        <div class="smart-pagination">
-                            <button>‹</button>
-                            <button class="active">1</button>
-                            <button>›</button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 

@@ -150,10 +150,99 @@ document.addEventListener('DOMContentLoaded', function () {
   // sidebar toggle event
   const sidebarHideBtn = document.querySelector('#sidebar-hide');
   const sidebar = document.querySelector('.pc-sidebar');
+  const desktopSidebarBreakpoint = 1200;
+  const sidebarPreferenceKey = 'smartcashier.sidebar.collapsed';
+
+  function isDesktopViewport() {
+    return window.innerWidth >= desktopSidebarBreakpoint;
+  }
+
+  function isDesktopSidebarCollapsed() {
+    return document.body.classList.contains('smart-sidebar-collapsed');
+  }
+
+  function updateSidebarToggleState(expanded) {
+    if (sidebarHideBtn) {
+      sidebarHideBtn.setAttribute('aria-expanded', String(expanded));
+    }
+  }
+
+  function applyDesktopSidebarState(collapsed) {
+    document.body.classList.toggle('smart-sidebar-collapsed', collapsed);
+    updateSidebarToggleState(!collapsed);
+
+    try {
+      window.localStorage.setItem(sidebarPreferenceKey, collapsed ? 'true' : 'false');
+    } catch (error) {
+      // Ignore storage failures; the toggle should still work for the current session.
+    }
+  }
+
+  function toggleMobileSidebar() {
+    if (!sidebar) {
+      return;
+    }
+
+    if (sidebar.classList.contains('mob-sidebar-active')) {
+      rm_menu();
+      updateSidebarToggleState(false);
+      return;
+    }
+
+    sidebar.classList.add('mob-sidebar-active');
+    updateSidebarToggleState(true);
+
+    if (!document.querySelector('.pc-menu-overlay')) {
+      sidebar.insertAdjacentHTML('beforeend', '<div class="pc-menu-overlay"></div>');
+
+      document.querySelector('.pc-menu-overlay').addEventListener('click', function () {
+        rm_menu();
+        updateSidebarToggleState(false);
+      });
+    }
+  }
+
+  function syncSidebarToggleState() {
+    if (!sidebar) {
+      return;
+    }
+
+    if (isDesktopViewport()) {
+      if (sidebar.classList.contains('mob-sidebar-active')) {
+        rm_menu();
+      }
+
+      updateSidebarToggleState(!isDesktopSidebarCollapsed());
+      return;
+    }
+
+    updateSidebarToggleState(sidebar.classList.contains('mob-sidebar-active'));
+  }
+
+  if (sidebarHideBtn) {
+    try {
+      const storedSidebarState = window.localStorage.getItem(sidebarPreferenceKey);
+      if (storedSidebarState === 'true') {
+        document.body.classList.add('smart-sidebar-collapsed');
+      }
+    } catch (error) {
+      // Ignore storage failures; the default expanded layout still works.
+    }
+
+    syncSidebarToggleState();
+    window.addEventListener('resize', syncSidebarToggleState);
+  }
 
   if (sidebarHideBtn && sidebar) {
-    sidebarHideBtn.addEventListener('click', () => {
-      sidebar.classList.toggle('pc-sidebar-hide');
+    sidebarHideBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+
+      if (window.innerWidth < desktopSidebarBreakpoint) {
+        toggleMobileSidebar();
+        return;
+      }
+
+      applyDesktopSidebarState(!isDesktopSidebarCollapsed());
     });
   }
 
@@ -286,6 +375,7 @@ function rm_menu() {
   var topbar = document.querySelector('.topbar');
   var sidebarOverlay = document.querySelector('.pc-sidebar .pc-menu-overlay');
   var topbarOverlay = document.querySelector('.topbar .pc-menu-overlay');
+  var sidebarHideBtn = document.querySelector('#sidebar-hide');
 
   // Remove active class from sidebar if it exists
   if (sidebar) {
@@ -306,6 +396,10 @@ function rm_menu() {
   if (topbarOverlay) {
     topbarOverlay.remove();
   }
+
+  if (sidebarHideBtn) {
+    sidebarHideBtn.setAttribute('aria-expanded', 'false');
+  }
 }
 
 // remove overlay
@@ -314,6 +408,7 @@ function remove_overlay_menu() {
   var topbar = document.querySelector('.topbar');
   var sidebarOverlay = document.querySelector('.pc-sidebar .pc-menu-overlay');
   var topbarOverlay = document.querySelector('.topbar .pc-menu-overlay');
+  var sidebarHideBtn = document.querySelector('#sidebar-hide');
 
   // Remove active class from sidebar
   if (sidebar) {
@@ -332,6 +427,10 @@ function remove_overlay_menu() {
 
   if (topbarOverlay) {
     topbarOverlay.remove();
+  }
+
+  if (sidebarHideBtn) {
+    sidebarHideBtn.setAttribute('aria-expanded', 'false');
   }
 }
 
