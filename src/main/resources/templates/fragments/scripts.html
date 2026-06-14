@@ -1,29 +1,23 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
-
 <th:block th:fragment="scripts">
     <script th:src="@{/assets/js/plugins/popper.min.js}"></script>
     <script th:src="@{/assets/js/plugins/simplebar.min.js}"></script>
     <script th:src="@{/assets/js/plugins/bootstrap.min.js}"></script>
-
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
             integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
             crossorigin="anonymous"></script>
-
     <script src="https://cdn.datatables.net/2.3.8/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.3.8/js/dataTables.bootstrap5.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <!-- Turbo Drive agar pindah halaman tidak reload putih penuh -->
-    <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.13/dist/turbo.es2017-umd.js"></script>
-
     <script th:src="@{/assets/js/fonts/custom-font.js}"></script>
+    <script th:src="@{/assets/js/script.js}"></script>
+    <script th:src="@{/assets/js/theme.js}"></script>
     <script th:src="@{/assets/js/plugins/feather.min.js}"></script>
     <script th:src="@{/assets/js/smartcashier-alerts.js}"></script>
-
     <script>
-        function initSmartCashierDataTables() {
+        (function () {
             function parseBoolean(value, fallback) {
                 if (value === undefined) {
                     return fallback;
@@ -31,17 +25,8 @@
                 return value === 'true';
             }
 
-            if (!window.jQuery || !$.fn.DataTable) {
-                return;
-            }
-
             $('.js-datatable').each(function () {
                 const $table = $(this);
-
-                if ($.fn.DataTable.isDataTable(this)) {
-                    return;
-                }
-
                 const noSortTargets = [];
                 const columnCount = $table.find('thead th').length;
 
@@ -77,63 +62,29 @@
 
                 if ($placeholderRow.length) {
                     const emptyMessage = $placeholderRow.text().trim();
-
                     if (emptyMessage) {
                         options.language.emptyTable = emptyMessage;
                     }
-
                     $placeholderRow.remove();
                 }
 
                 if (noSortTargets.length > 0) {
-                    options.columnDefs = [
-                        {
-                            orderable: false,
-                            targets: noSortTargets
-                        }
-                    ];
+                    options.columnDefs = [{ orderable: false, targets: noSortTargets }];
                 }
 
                 $table.DataTable(options);
             });
-        }
-
-        function initSmartSidebarToggle() {
-            const sidebarButton = document.getElementById('smart-sidebar-toggle');
-
-            if (!sidebarButton) {
-                return;
-            }
-
-            sidebarButton.onclick = function (event) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                document.body.classList.toggle('smart-sidebar-collapsed');
-            };
-        }
-
-        function initSmartCashierPage() {
-            initSmartSidebarToggle();
-            initSmartCashierDataTables();
-
-            document.body.classList.add('smart-page-ready');
-        }
-
-        document.addEventListener('DOMContentLoaded', initSmartCashierPage);
-        document.addEventListener('turbo:load', initSmartCashierPage);
-
-        document.addEventListener('turbo:before-cache', function () {
-            if (window.jQuery && $.fn.DataTable) {
-                $('.js-datatable').each(function () {
-                    if ($.fn.DataTable.isDataTable(this)) {
-                        $(this).DataTable().destroy();
-                    }
-                });
-            }
-        });
+        }());
+    </script>
+    <script>
+        layout_change('light');
+        layout_sidebar_change('light');
+        change_box_container('false');
+        layout_caption_change('true');
+        layout_rtl_change('false');
+        preset_change('preset-1');
+        header_change('header-1');
     </script>
 </th:block>
-
 </body>
 </html>

@@ -57,7 +57,9 @@
                         <tr th:each="category : ${categories}">
                             <td>
                                 <div class="category-name-wrap">
-                                    <span class="category-icon">✦</span>
+                                    <span class="category-icon">
+                                        <i class="ph ph-tag"></i>
+                                    </span>
                                     <div>
                                         <strong th:text="${category.name}">Kategori</strong>
                                         <small>Jenis kategori kain</small>
